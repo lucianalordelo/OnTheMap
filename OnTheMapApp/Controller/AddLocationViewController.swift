@@ -8,79 +8,123 @@
 
 import Foundation
 import UIKit
+import MapKit
 
-class PostViewController: UIViewController, UITextFieldDelegate {
+class AddLocationViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var locationTextField : UITextField!
+    @IBOutlet weak var findbutton: UIButton!
     @IBOutlet weak var backButton : UIButton!
+    
+    var locationData = LocationData()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         locationTextField.delegate = self
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        subscribeToKeyboardNotifications()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        unsubscribeFromKeyboardNotifications()
     }
     
     @IBAction func backToMain(_ sender: Any) {
-        let controller = storyboard?.instantiateViewController(withIdentifier: "navigationController") as! UINavigationController
-        present(controller, animated: true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
     
     @IBAction func findLocation(_ sender: Any) {
         if locationTextField.text == "" {
-            HelperMethods.alertController(title: "Error", message: "Type a location")
-        }
-            
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            if let studentLocation = appDelegate.currentStudentInformation {
-              
-                let studentInfo = StudentInformation(dictionary: [
-                    "ObjectID":studentLocation.ObjectID as AnyObject,
-                    "UniqueKey":"\(appDelegate.accountKey)" as AnyObject,
-                    "FirstName": "\(appDelegate.firstName)" as AnyObject,
-                    "LastName" : "\(appDelegate.lastName)" as AnyObject,
-                    "MapString" : locationTextField.text! as AnyObject,
-                    "MediaURL" : studentLocation.MediaURL as AnyObject,
-                    "Latitude" : 0 as AnyObject,
-                    "Longitude" : 0 as AnyObject
-                    ])
-                //Uses post method
-                ParseApiClient.sharedInstance().updateLocation(studentInfo!) { (error) in
-                    if let error = error {
-                        performUpdatesOnMain {
-                            
-                            self.present(HelperMethods.alertController(title: "Error", message: error), animated: true, completion: nil)
-                            
-                        }
+          self.present(HelperMethods.alertController(title: "Error", message: "type a location"), animated: true, completion: nil)
+        } else {
+            locationData.locationText = locationTextField.text!
+            //Get the latitude and longitude
+            getTypedLocation { (error) in
+                if error != nil {
+                    performUpdatesOnMain {
+                        self.present(HelperMethods.alertController(title: "Error", message: "Could not find location"), animated: true, completion: nil)
                     }
-                }
-            } else {
-                let studentInfo = StudentInformation(dictionary: [
-                    "ObjectID":appDelegate.sessionId as AnyObject,
-                    "UniqueKey":"\(appDelegate.accountKey)" as AnyObject,
-                    "FirstName": "\(appDelegate.firstName)" as AnyObject,
-                    "LastName" : "\(appDelegate.lastName)" as AnyObject,
-                    "MapString" : locationTextField.text! as AnyObject,
-                    "MediaURL" : "no url" as AnyObject,
-                    "Latitude" : 0 as AnyObject,
-                    "Longitude" : 0 as AnyObject
-                    ])
-                //Used put method
-                ParseApiClient.sharedInstance().publishLocation(studentInfo!) { (error) in
-                    if let error = error {
-                        performUpdatesOnMain {
-                            
-                            self.present(HelperMethods.alertController(title: "Error", message: error), animated: true, completion: nil)
-                            
-                        }
-                    }
+                    
+                } else {
+                    self.performSegue(withIdentifier: "confirmVC", sender: self)
                 }
             }
         }
+    }
     
+    func getTypedLocation(completionHandler: @escaping (_ error: String?)-> Void) {
+
+        let geocoder = CLGeocoder()
+        geocoder.geocodeAddressString(locationTextField.text!) { (placemarks, error) in
+            if error != nil{
+               self.present(HelperMethods.alertController(title: "Place not found", message: "Try  again"), animated: true, completion: nil)
+            }
+            
+            guard let placemarks = placemarks else {
+                completionHandler(error?.localizedDescription)
+                return
+            }
+            
+            guard let latitude = placemarks[0].location?.coordinate.latitude else{
+                completionHandler(error?.localizedDescription)
+                return
+            }
+            
+            guard let longitude = placemarks[0].location?.coordinate.longitude else{
+                completionHandler(error?.localizedDescription)
+                return
+            }
+            
+            self.locationData.latitude = latitude
+            self.locationData.longitude = longitude
+            completionHandler(nil)
+            
+        }
+        
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "confirmVC" {
+            let controller = segue.destination as! ConfirmLocationViewController
+            controller.locationData = self.locationData
+        }
+    }
+    
+    //Configure keyboard appearance
+    func subscribeToKeyboardNotifications () {
+        NotificationCenter.default.addObserver(self, selector: #selector (keyBoardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector (keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: self)
+    }
+    
+    func unsubscribeFromKeyboardNotifications () {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc func keyBoardWillShow (_ notification: Notification) {
+        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey]) as? NSValue {
+            if view.frame.origin.y == 0{
+                view.frame.origin.y -= (keyboardSize.cgRectValue.height)/2
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide (_ notification: Notification) {
+        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey]) as? NSValue {
+            if view.frame.origin.y != 0{
+                view.frame.origin.y += (keyboardSize.cgRectValue.height)/2
+            }
+        }
+    }
     //Delegates
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+        findLocation(findbutton)
         return true
     }
 }

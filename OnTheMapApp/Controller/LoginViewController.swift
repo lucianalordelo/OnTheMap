@@ -8,18 +8,142 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class LoginViewController: UIViewController, UITextFieldDelegate {
 
+    //MARK: Variables
+    @IBOutlet weak var email : UITextField!
+    @IBOutlet weak var password: UITextField!
+    @IBOutlet weak var loginButton : UIButton!
+    @IBOutlet weak var loginLabel : UILabel!
+    @IBOutlet weak var activityIndicator : UIActivityIndicatorView!
+    
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        email.delegate = self
+        password.delegate = self
+        password.isSecureTextEntry = true
+        email.tag = 100
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        subscribeToKeyboardNotifications()
+        configureUI(true)
     }
-
-
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        unsubscribeFromKeyboardNotifications()
+    }
+  
+    //MARK: Login to udacity
+    @IBAction func UdacityLogin(_ sender: Any) {
+        
+        if email.text == "" || password.text == ""{
+            present(HelperMethods.alertController(title: "Incorrect email or password", message: "Enter your email and password"), animated: true, completion: nil)
+        }
+        
+        configureUI(false)
+        
+        //get accountKey and sessionID
+        UdacityApiClient.sharedInstance().login(email: email.text!, password: password.text!) { (accountKey, sessionID, error) in
+            
+            guard let sessionID = sessionID, let accountKey = accountKey else{
+                performUpdatesOnMain {
+                    self.configureUI(true)
+                    self.present(HelperMethods.alertController(title: "Login error", message: "Unable to complete login: \(error!)"), animated: true, completion: nil)
+                }
+                return
+            }
+            
+            self.appDelegate.sessionId = sessionID
+            self.appDelegate.accountKey = accountKey
+            
+            //Get student Location, if any
+            ParseApiClient.sharedInstance().getStudentLocation(accountKey) { (studentInfo, error) in
+                guard error == nil else {
+                    return
+                }
+                self.appDelegate.currentStudentInformation = studentInfo
+                
+            }
+            
+            //get first and last name
+            UdacityApiClient.sharedInstance().getUserPublicData("\(accountKey)", { (error) in
+                
+            })
+            
+            performUpdatesOnMain {
+                self.completeLogin()
+            }
+        }
+    }
+    
+    @IBAction func signup(_ sender: Any) {
+        let url = URL(string: "https://www.udacity.com/account/auth#!/signup")
+        
+        if UIApplication.shared.canOpenURL(url!) {
+            UIApplication.shared.open(url!, options: [:], completionHandler: nil)
+        }
+    }
+    
+    //MARK: Helpers
+    
+    //Enable or Hide UIElements
+    
+    func completeLogin() {
+    let controller = self.storyboard?.instantiateViewController(withIdentifier: "navigationController") as! UINavigationController
+    present(controller, animated: true, completion: nil)
+    }
+    
+    func configureUI (_ Enabled: Bool){
+        activityIndicator.isHidden = Enabled
+        loginButton.isEnabled = Enabled
+        password.isEnabled = Enabled
+        email.isEnabled = Enabled
+    }
+    
+    
+    //Configure keyboard appearance
+    func subscribeToKeyboardNotifications () {
+        NotificationCenter.default.addObserver(self, selector: #selector (keyBoardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector (keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: self)
+    }
+    
+    func unsubscribeFromKeyboardNotifications () {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc func keyBoardWillShow (_ notification: Notification) {
+        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey]) as? NSValue {
+            if view.frame.origin.y == 0{
+                view.frame.origin.y -= (keyboardSize.cgRectValue.height)/2
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide (_ notification: Notification) {
+        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey]) as? NSValue {
+            if view.frame.origin.y != 0{
+                view.frame.origin.y += (keyboardSize.cgRectValue.height)/2
+            }
+        }
+    }
+    
+    //TextFieldDelegate
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        //email.tag == 100 . after pressing return, passwordtextfield becomes first responder
+        if textField.tag == 100 {
+            password.becomeFirstResponder()
+            return true
+        }
+        //after pressing return (password), udacity login is called
+        textField.resignFirstResponder()
+        UdacityLogin(loginButton)
+        return true
+    }
+    
 }
 
