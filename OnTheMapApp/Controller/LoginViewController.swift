@@ -15,8 +15,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var loginButton : UIButton!
     @IBOutlet weak var loginLabel : UILabel!
-    @IBOutlet weak var activityIndicator : UIActivityIndicatorView!
     
+    var activityIndicator = UIActivityIndicatorView()
     let appDelegate = UIApplication.shared.delegate as! AppDelegate
     
     override func viewDidLoad() {
@@ -45,14 +45,17 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             present(HelperMethods.alertController(title: "Incorrect email or password", message: "Enter your email and password"), animated: true, completion: nil)
         }
         
-        configureUI(false)
+        HelperMethods.startActivityIndicator(self.view, activityIndicator: self.activityIndicator)
         
         //get accountKey and sessionID
         UdacityApiClient.sharedInstance().login(email: email.text!, password: password.text!) { (accountKey, sessionID, error) in
+           
+            performUpdatesOnMain {
+                self.configureUI(false)
+            }
             
             guard let sessionID = sessionID, let accountKey = accountKey else{
                 performUpdatesOnMain {
-                    self.configureUI(true)
                     self.present(HelperMethods.alertController(title: "Login error", message: "Unable to complete login: \(error!)"), animated: true, completion: nil)
                 }
                 return
@@ -76,6 +79,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             })
             
             performUpdatesOnMain {
+                HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
                 self.completeLogin()
             }
         }
@@ -99,7 +103,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func configureUI (_ Enabled: Bool){
-        activityIndicator.isHidden = Enabled
         loginButton.isEnabled = Enabled
         password.isEnabled = Enabled
         email.isEnabled = Enabled

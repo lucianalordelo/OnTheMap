@@ -15,8 +15,10 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var locationTextField : UITextField!
     @IBOutlet weak var findbutton: UIButton!
     @IBOutlet weak var backButton : UIButton!
+   
     
     var locationData = LocationData()
+    var activityIndicator = UIActivityIndicatorView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,8 +59,13 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    
     func getTypedLocation(completionHandler: @escaping (_ error: String?)-> Void) {
-
+        
+        performUpdatesOnMain {
+            HelperMethods.startActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+        }
+        
         let geocoder = CLGeocoder()
         geocoder.geocodeAddressString(locationTextField.text!) { (placemarks, error) in
             if error != nil{
@@ -83,10 +90,10 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
             self.locationData.latitude = latitude
             self.locationData.longitude = longitude
             completionHandler(nil)
-            
+            performUpdatesOnMain {
+               HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+            }
         }
-        
-        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

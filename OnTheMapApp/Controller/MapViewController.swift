@@ -18,14 +18,19 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     
     //Outlet:
     @IBOutlet weak var mapView : MKMapView?
+    var activityIndicator = UIActivityIndicatorView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView?.delegate = self
-        
+        loadData()
+        tabBarController?.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain , target: self, action: #selector (logoutPressed))
+        tabBarController?.navigationItem.rightBarButtonItems = [UIBarButtonItem(image: UIImage(named: "icon_pin"), style: .plain, target: self, action: #selector(postPin)), UIBarButtonItem(image: UIImage(named: "icon_refresh"), style: .plain, target: self, action: #selector (refresh))]
+        navigationItem.title = "On the Map"
     }
     
-    @IBAction func logoutPressed () {
+    
+   @objc func logoutPressed () {
         print("teste")
         UdacityApiClient.sharedInstance().logout { (error) in
             performUpdatesOnMain {
@@ -38,7 +43,29 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         }
     }
     
+    @objc func postPin () {
+        
+        func presentNextVC () {
+            performSegue(withIdentifier: "addVC", sender: UINavigationController.self)
+        }
+        
+        if (UIApplication.shared.delegate as! AppDelegate).currentStudentInformation != nil {
+           let alertcontroller = UIAlertController(title: "Overwrite?", message: "Overwrite previous location posted?", preferredStyle: .alert)
+            let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
+            let yesAction = UIAlertAction(title: "Yes", style: .destructive) { (alertAction) in
+                presentNextVC()
+            }
+            alertcontroller.addAction(noAction)
+            alertcontroller.addAction(yesAction)
+            present(alertcontroller,animated: true, completion: nil)
+        } else{
+            presentNextVC()
+        }
+    }
     
+    @objc func refresh() {
+        loadData()
+    }
     
     
     //MARK: MapViewDelegate
@@ -48,7 +75,7 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseID) as? MKPinAnnotationView
         
         if pinView == nil {
-            pinView = MKAnnotationView (annotation: annotation, reuseIdentifier: reuseID) as! MKPinAnnotationView
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
             pinView?.canShowCallout = true
             pinView?.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
             pinView?.pinTintColor = .red
@@ -59,7 +86,11 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     }
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        guard let annotation = view.annotation, let subtitle = annotation.subtitle else {
+        
+        guard let annotation = view.annotation else {
+            return
+        }
+        guard let subtitle = annotation.subtitle else{
             return
         }
         let url = URL(string: subtitle!)
@@ -70,20 +101,20 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     
     //MARK : Helpers
     func loadData(){
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+       
+        HelperMethods.startActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+        
         ParseApiClient.sharedInstance().getLocations { (arrayOfLocations, error) in
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
             
-            guard let error = error else {
+            if let error = error {
                 performUpdatesOnMain {
-                    HelperMethods.alertController(title: "Error", message: "An error has occured")
+                    self.present(HelperMethods.alertController(title: "Error", message: error), animated: true, completion: nil)
                 }
-                return
             }
             
             guard let arrayOfLocations = arrayOfLocations else {
                 performUpdatesOnMain {
-                    HelperMethods.alertController(title: "Error", message: error)
+                    self.present(HelperMethods.alertController(title: "Error", message: "Unable to get student locations"), animated: true, completion: nil)
                 }
                 return
             }
@@ -91,21 +122,26 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
             performUpdatesOnMain {
                 StudentInformations.data = arrayOfLocations
                 self.updateMap()
+                HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
             }
-            
         }
+       
     }
     
     func updateMap() {
+
         mapView?.removeAnnotations((mapView?.annotations)!)
         var annotations = [MKPointAnnotation]()
         
         for item in StudentInformations.data {
             let annotation = MKPointAnnotation()
-            annotation.title = item.FirstName! + "" + item.LastName!
-            annotation.coordinate = CLLocationCoordinate2DMake(item.Latitude!, item.Longitude!)
-            annotation.subtitle? = ""
+            annotation.title = item.firstName + " " + item.lastName
+            annotation.coordinate = CLLocationCoordinate2DMake(item.latitude, item.longitude)
+            annotation.subtitle = item.mediaUrl
             annotations.append(annotation)
+            if item.firstName == "luciana" {
+                print("found me")
+            }
         }
         mapView?.addAnnotations(annotations)
     }
