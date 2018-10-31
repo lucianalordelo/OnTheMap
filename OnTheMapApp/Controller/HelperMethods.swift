@@ -10,7 +10,7 @@ import UIKit
 
 class HelperMethods {
     
-   class func alertController(title:String, message: String) -> UIAlertController {
+    class func alertController(title:String, message: String) -> UIAlertController {
         let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "Ok", style: .default, handler: nil)
         controller.addAction(action)

@@ -18,7 +18,6 @@ class ConfirmLocationViewController: UIViewController, MKMapViewDelegate, UIText
     @IBOutlet weak var mapView : MKMapView!
     @IBOutlet weak var urlTextField : UITextField!
     
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setAnnotations()
@@ -29,34 +28,32 @@ class ConfirmLocationViewController: UIViewController, MKMapViewDelegate, UIText
         super.viewWillAppear(animated)
         unsubscribeFromKeyboardNotifications()
     }
+    
     override func viewDidLoad() {
-        
-        urlTextField.delegate = self as? UITextFieldDelegate
+        urlTextField.delegate = self
     }
     
     func setAnnotations() {
-    //Coordinates
-    let coordinates = CLLocationCoordinate2D(latitude: locationData.latitude, longitude: locationData.longitude)
-    
-    //Map region
-    let region = MKCoordinateRegion(center: coordinates, span: MKCoordinateSpan(latitudeDelta: 2, longitudeDelta: 2))
+        //Coordinates
+        let coordinates = CLLocationCoordinate2D(latitude: locationData.latitude, longitude: locationData.longitude)
+        
+        //Map region
+        let region = MKCoordinateRegion(center: coordinates, span: MKCoordinateSpan(latitudeDelta: 2, longitudeDelta: 2))
         self.mapView.setRegion(region, animated: true)
         
-    //Annotation
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    let title = "\(appDelegate.firstName)" + " " + "\(appDelegate.lastName)"
-    let subtitle = urlTextField.text ?? "No URL Provided"
-    annotation.title = title
-    annotation.coordinate = coordinates
-    annotation.subtitle = subtitle
-    
+        //Annotation
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let title = "\(appDelegate.firstName)" + " " + "\(appDelegate.lastName)"
+        let subtitle = urlTextField.text ?? "No URL Provided"
+        annotation.title = title
+        annotation.coordinate = coordinates
+        annotation.subtitle = subtitle
         
-    //Set annotation
+        
+        //Set annotation
         self.mapView.addAnnotation(self.annotation)
-       
+        
     }
-
-    
     
     @IBAction func submit() {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -68,7 +65,7 @@ class ConfirmLocationViewController: UIViewController, MKMapViewDelegate, UIText
             ParseApiClient.sharedInstance().updateLocation(info) { (error) in
                 if error != nil {
                     performUpdatesOnMain {
-                       self.present(HelperMethods.alertController(title: "Error", message: "unable to update location"), animated: true, completion: nil)
+                        self.present(HelperMethods.alertController(title: "Error", message: "unable to update location"), animated: true, completion: nil)
                     }
                 }
                 performUpdatesOnMain {
@@ -79,15 +76,15 @@ class ConfirmLocationViewController: UIViewController, MKMapViewDelegate, UIText
         } else {
             let info = StudentInformation(objectId: "", uniqueKey: "\(appDelegate.accountKey!)", firstName: "\(appDelegate.firstName)", lastName: "\(appDelegate.lastName)", mapString: "\(locationData.locationText)", mediaUrl: "\(urlTextField.text!)", latitude: locationData.latitude, longitude: locationData.longitude)
             
-          //First map posting
+            //First map posting
             ParseApiClient.sharedInstance().publishLocation(info) { (error) in
                 if error != nil {
                     performUpdatesOnMain {
-                       self.present(HelperMethods.alertController(title: "Error", message: "unable to update location"), animated: true, completion: nil)
+                        self.present(HelperMethods.alertController(title: "Error", message: "unable to update location"), animated: true, completion: nil)
                     }
                 }
                 performUpdatesOnMain {
-                   self.navigationController?.popToRootViewController(animated: true)
+                    self.navigationController?.popToRootViewController(animated: true)
                 }
             }
         }
@@ -104,11 +101,11 @@ class ConfirmLocationViewController: UIViewController, MKMapViewDelegate, UIText
     }
     
     @objc func keyBoardWillShow (_ notification: Notification) {
-                view.frame.origin.y = 0
+        view.frame.origin.y = 0
     }
     
     @objc func keyboardWillHide (_ notification: Notification) {
-                view.frame.origin.y = 0
+        view.frame.origin.y = 0
     }
     
     //Delegates

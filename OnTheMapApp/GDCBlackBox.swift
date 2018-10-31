@@ -7,3 +7,9 @@
 //
 
 import Foundation
+
+func performUpdatesOnMain (_ updates: @escaping()->Void) {
+    DispatchQueue.main.async {
+        updates()
+    }
+}

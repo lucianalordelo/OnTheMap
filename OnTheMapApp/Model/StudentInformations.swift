@@ -7,3 +7,9 @@
 //
 
 import Foundation
+
+struct StudentInformations {
+    
+    static var data = [StudentInformation]()
+    
+}

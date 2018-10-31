@@ -12,7 +12,12 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+   
+    var accountKey: Int!
+    var sessionId: String!
+    var currentStudentInformation: StudentInformation!
+    var firstName = ""
+    var lastName = ""
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.

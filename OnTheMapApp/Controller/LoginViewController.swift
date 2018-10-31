@@ -9,7 +9,7 @@
 import UIKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
-
+    
     //MARK: Variables
     @IBOutlet weak var email : UITextField!
     @IBOutlet weak var password: UITextField!
@@ -37,7 +37,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.viewWillAppear(animated)
         unsubscribeFromKeyboardNotifications()
     }
-  
+    
     //MARK: Login to udacity
     @IBAction func UdacityLogin(_ sender: Any) {
         
@@ -49,7 +49,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         //get accountKey and sessionID
         UdacityApiClient.sharedInstance().login(email: email.text!, password: password.text!) { (accountKey, sessionID, error) in
-           
+            
             performUpdatesOnMain {
                 self.configureUI(false)
             }
@@ -98,8 +98,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     //Enable or Hide UIElements
     
     func completeLogin() {
-    let controller = self.storyboard?.instantiateViewController(withIdentifier: "navigationController") as! UINavigationController
-    present(controller, animated: true, completion: nil)
+        let controller = self.storyboard?.instantiateViewController(withIdentifier: "navigationController") as! UINavigationController
+        present(controller, animated: true, completion: nil)
     }
     
     func configureUI (_ Enabled: Bool){

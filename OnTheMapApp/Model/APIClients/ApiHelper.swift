@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct URLHelper {
+struct ApiHelper {
     
     struct Base {
         
@@ -17,15 +17,39 @@ struct URLHelper {
         
     }
     
+    struct Constants {
+        
+        static let parseAppId = "QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr"
+        static let parseApiKey = "QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY"
+        
+    }
+    
     struct Extras {
         
         static let studentLocation = "StudentLocation"
         static let session = "session"
+        static let users = "users"
+        
     }
     
     struct UdacityResponses {
         
         static let users = "users"
         
+    }
+    
+    struct ParseResponses    {
+        
+        static let ResultsDict = "results"
+        static let ObjectID = "objectId"
+        static let UniqueKey = "uniqueKey"
+        static let FirstName = "firstName"
+        static let LastName = "lastName"
+        static let MapString = "mapString"
+        static let Latitude = "latitude"
+        static let Longitude = "longitude"
+        static let CreatedAt = "createdAt"
+        static let UpdatedAt = "updatedAt"
+        static let MediaURL =  "mediaURL"
     }
 }

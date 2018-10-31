@@ -30,7 +30,7 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     }
     
     
-   @objc func logoutPressed () {
+    @objc func logoutPressed () {
         print("teste")
         UdacityApiClient.sharedInstance().logout { (error) in
             performUpdatesOnMain {
@@ -50,7 +50,7 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         }
         
         if (UIApplication.shared.delegate as! AppDelegate).currentStudentInformation != nil {
-           let alertcontroller = UIAlertController(title: "Overwrite?", message: "Overwrite previous location posted?", preferredStyle: .alert)
+            let alertcontroller = UIAlertController(title: "Overwrite?", message: "Overwrite previous location posted?", preferredStyle: .alert)
             let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
             let yesAction = UIAlertAction(title: "Yes", style: .destructive) { (alertAction) in
                 presentNextVC()
@@ -101,7 +101,7 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     
     //MARK : Helpers
     func loadData(){
-       
+        
         HelperMethods.startActivityIndicator(self.view, activityIndicator: self.activityIndicator)
         
         ParseApiClient.sharedInstance().getLocations { (arrayOfLocations, error) in
@@ -125,11 +125,10 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
                 HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
             }
         }
-       
     }
     
     func updateMap() {
-
+        
         mapView?.removeAnnotations((mapView?.annotations)!)
         var annotations = [MKPointAnnotation]()
         

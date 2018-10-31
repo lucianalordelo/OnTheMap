@@ -14,8 +14,6 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var locationTextField : UITextField!
     @IBOutlet weak var findbutton: UIButton!
-    @IBOutlet weak var backButton : UIButton!
-   
     
     var locationData = LocationData()
     var activityIndicator = UIActivityIndicatorView()
@@ -35,14 +33,9 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
         unsubscribeFromKeyboardNotifications()
     }
     
-    @IBAction func backToMain(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    
     @IBAction func findLocation(_ sender: Any) {
         if locationTextField.text == "" {
-          self.present(HelperMethods.alertController(title: "Error", message: "type a location"), animated: true, completion: nil)
+            self.present(HelperMethods.alertController(title: "Error", message: "type a location"), animated: true, completion: nil)
         } else {
             locationData.locationText = locationTextField.text!
             //Get the latitude and longitude
@@ -69,7 +62,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
         let geocoder = CLGeocoder()
         geocoder.geocodeAddressString(locationTextField.text!) { (placemarks, error) in
             if error != nil{
-               self.present(HelperMethods.alertController(title: "Place not found", message: "Try  again"), animated: true, completion: nil)
+                self.present(HelperMethods.alertController(title: "Place not found", message: "Try  again"), animated: true, completion: nil)
             }
             
             guard let placemarks = placemarks else {
@@ -91,7 +84,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
             self.locationData.longitude = longitude
             completionHandler(nil)
             performUpdatesOnMain {
-               HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+                HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
             }
         }
     }
