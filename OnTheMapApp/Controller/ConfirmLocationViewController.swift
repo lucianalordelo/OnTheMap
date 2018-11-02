@@ -59,10 +59,11 @@ class ConfirmLocationViewController: UIViewController, MKMapViewDelegate, UIText
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
         if let currentStudentInfo = appDelegate.currentStudentInformation {
-            let info = StudentInformation(objectId: currentStudentInfo.objectId, uniqueKey: "\(appDelegate.accountKey!)", firstName: appDelegate.firstName, lastName: appDelegate.lastName, mapString: "\(locationData.locationText)", mediaUrl: "\(urlTextField.text!)", latitude: locationData.latitude, longitude: locationData.longitude)
             
             //method update location called when user wants to overwrite a location
-            ParseApiClient.sharedInstance().updateLocation(info) { (error) in
+            ParseApiClient.sharedInstance().updateLocation(objectID: currentStudentInfo.objectId ,uniqueKey: "\(appDelegate.accountKey!)", firstName: appDelegate.firstName, lastName: appDelegate.lastName, mapString: "\(locationData.locationText)", mediaUrl: "\(urlTextField.text!)", latitude: locationData.latitude, longitude: locationData.longitude) { (error) in
+
+            
                 if error != nil {
                     performUpdatesOnMain {
                         self.present(HelperMethods.alertController(title: "Error", message: "unable to update location"), animated: true, completion: nil)
@@ -74,10 +75,10 @@ class ConfirmLocationViewController: UIViewController, MKMapViewDelegate, UIText
                 
             }
         } else {
-            let info = StudentInformation(objectId: "", uniqueKey: "\(appDelegate.accountKey!)", firstName: "\(appDelegate.firstName)", lastName: "\(appDelegate.lastName)", mapString: "\(locationData.locationText)", mediaUrl: "\(urlTextField.text!)", latitude: locationData.latitude, longitude: locationData.longitude)
+            //let info = StudentInformation(objectId: "", uniqueKey: "\(appDelegate.accountKey!)", firstName: "\(appDelegate.firstName)", lastName: "\(appDelegate.lastName)", mapString: "\(locationData.locationText)", mediaUrl: "\(urlTextField.text!)", latitude: locationData.latitude, longitude: locationData.longitude)
             
             //First map posting
-            ParseApiClient.sharedInstance().publishLocation(info) { (error) in
+            ParseApiClient.sharedInstance().publishLocation(uniqueKey: "\(appDelegate.accountKey!)", firstName: appDelegate.firstName, lastName: appDelegate.lastName, mapString: locationData.locationText, mediaUrl: urlTextField.text!, latitude: locationData.latitude, longitude: locationData.longitude) { (error) in
                 if error != nil {
                     performUpdatesOnMain {
                         self.present(HelperMethods.alertController(title: "Error", message: "unable to update location"), animated: true, completion: nil)

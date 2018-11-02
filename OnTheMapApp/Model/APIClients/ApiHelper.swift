@@ -40,7 +40,6 @@ struct ApiHelper {
     
     struct ParseResponses    {
         
-        static let ResultsDict = "results"
         static let ObjectID = "objectId"
         static let UniqueKey = "uniqueKey"
         static let FirstName = "firstName"

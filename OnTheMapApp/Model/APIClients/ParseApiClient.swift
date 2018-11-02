@@ -18,7 +18,6 @@ class ParseApiClient: Client {
         let parameters = [
             "order": "-updatedAt",
             "limit": 100,
-            "skip": 200
             ] as [String : Any]
         
         let headers = [
@@ -85,19 +84,17 @@ class ParseApiClient: Client {
         
     }
     
-    func publishLocation (_ studentInfo: StudentInformation, _ completionHandler: @escaping(_ error:String?)-> Void) {
+    func publishLocation (uniqueKey: String, firstName: String, lastName: String, mapString: String, mediaUrl: String, latitude: Double, longitude: Double, _ completionHandler: @escaping(_ error:String?)-> Void) {
         
         let url = ApiHelper.Base.parse + ApiHelper.Extras.studentLocation
-        
         let headers = [
             "X-Parse-Application-Id": ApiHelper.Constants.parseAppId,
             "X-Parse-REST-API-Key": ApiHelper.Constants.parseApiKey,
             "Content-Type" : "application/json"
         ]
+        let jsonBody = "{\"uniqueKey\": \"\(uniqueKey)\", \"firstName\": \"\(firstName)\", \"lastName\": \"\(lastName)\",\"mapString\": \"\(mapString)\", \"mediaURL\": \"\(mediaUrl)\",\"latitude\": \(latitude), \"longitude\": \(longitude)}"
         
-        let jsonBody = studentInfo.json
         let client = "parse"
-        
         
         post(url, jsonBody, headers,client) { (data, error) in
             if error != nil {
@@ -107,17 +104,18 @@ class ParseApiClient: Client {
         }
     }
     
-    func updateLocation (_ studentInfo: StudentInformation, _ completionHandler: @escaping(_ error:String?)-> Void) {
+    func updateLocation (objectID: String, uniqueKey: String, firstName: String, lastName: String, mapString: String, mediaUrl: String, latitude: Double, longitude: Double, _ completionHandler: @escaping(_ error:String?)-> Void) {
         
-        let url = ApiHelper.Base.parse + ApiHelper.Extras.studentLocation + "/" + studentInfo.objectId
+        let url = ApiHelper.Base.parse + ApiHelper.Extras.studentLocation + "/" + objectID
         
+        let jsonBody = "{\"uniqueKey\": \"\(uniqueKey)\", \"firstName\": \"\(firstName)\", \"lastName\": \"\(lastName)\",\"mapString\": \"\(mapString)\", \"mediaURL\": \"\(mediaUrl)\",\"latitude\": \(latitude), \"longitude\": \(longitude)}"
+       
         let headers = [
             "X-Parse-Application-Id": ApiHelper.Constants.parseAppId,
             "X-Parse-REST-API-Key": ApiHelper.Constants.parseApiKey,
             "Content-Type" : "application/json"
         ]
         
-        let jsonBody = studentInfo.json
         let client = "parse"
         
         put(url, jsonBody, headers, client) { (data, error) in

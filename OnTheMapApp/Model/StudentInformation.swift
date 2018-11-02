@@ -83,26 +83,6 @@ struct StudentInformation {
         self.latitude = latitude
         self.longitude = longitude
     }
-    
-    /// Returns the JSON representation of this struct
-    var json: String {
-        get {
-            let mirror = Mirror(reflecting: self)
-            var elements = [String]()
-            
-            for (label, value) in mirror.children {
-                guard let label = label, label != "objectId" else { continue }
-                if label == "latitude" || label == "longitude" {
-                    elements.append("\"\(label)\": \(value)")
-                }
-                else {
-                    elements.append("\"\(label)\": \"\(value)\"")
-                }
-            }
-            
-            return "{ " + elements.joined(separator: ", ") + "}"
-        }
-    }
 }
 
 

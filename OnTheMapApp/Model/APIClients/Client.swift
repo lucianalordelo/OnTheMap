@@ -84,7 +84,7 @@ class Client {
         let task = session.dataTask(with: request) { (data, response, error) in
             
             guard (error==nil) else{
-                completionHandlerForPost(nil,NSError(domain: "delete", code: 0, userInfo: [NSLocalizedDescriptionKey:"There was an error with your request"]))
+                completionHandlerForPost(nil,NSError(domain: "Post", code: 0, userInfo: [NSLocalizedDescriptionKey:"There was an error with your request"]))
                 return
             }
             
@@ -112,8 +112,6 @@ class Client {
                 self.convertDataForJSON(data, completionHandlerForConvertData: completionHandlerForPost)
             }
             
-            
-            
         }
         
         task.resume()
@@ -130,6 +128,7 @@ class Client {
         var request = URLRequest(url: completeURL)
         request.httpMethod = "PUT"
         request.httpBody = jsonBody.data(using: String.Encoding.utf8)
+        
         if let headers = headers {
             for (key,value) in headers {
                 request.addValue(value, forHTTPHeaderField: key)
@@ -140,17 +139,17 @@ class Client {
         let task = session.dataTask(with: request) { (data, response, error) in
             
             guard (error==nil) else{
-                completionHandlerForPut(nil,NSError(domain: "delete", code: 0, userInfo: [NSLocalizedDescriptionKey:"There was an error with your request"]))
+                completionHandlerForPut(nil,NSError(domain: "Put", code: 0, userInfo: [NSLocalizedDescriptionKey:"There was an error with your request"]))
                 return
             }
             
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
-                completionHandlerForPut(nil,NSError(domain: "delete", code: 0, userInfo: [NSLocalizedDescriptionKey:"Your request return a response other than 2XX"]))
+                completionHandlerForPut(nil,NSError(domain: "Put", code: 0, userInfo: [NSLocalizedDescriptionKey:"Your request return a response other than 2XX"]))
                 return
             }
             
             guard let data = data else{
-                completionHandlerForPut(nil,NSError(domain: "delete", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not find data"]))
+                completionHandlerForPut(nil,NSError(domain: "Put", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not find data"]))
                 return
             }
             

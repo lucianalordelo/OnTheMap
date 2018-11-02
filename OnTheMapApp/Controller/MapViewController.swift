@@ -31,7 +31,6 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
     
     
     @objc func logoutPressed () {
-        print("teste")
         UdacityApiClient.sharedInstance().logout { (error) in
             performUpdatesOnMain {
                 if let error = error {
@@ -138,9 +137,6 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
             annotation.coordinate = CLLocationCoordinate2DMake(item.latitude, item.longitude)
             annotation.subtitle = item.mediaUrl
             annotations.append(annotation)
-            if item.firstName == "luciana" {
-                print("found me")
-            }
         }
         mapView?.addAnnotations(annotations)
     }
