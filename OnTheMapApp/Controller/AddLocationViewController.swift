@@ -61,6 +61,10 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
         
         let geocoder = CLGeocoder()
         geocoder.geocodeAddressString(locationTextField.text!) { (placemarks, error) in
+            performUpdatesOnMain {
+                HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+            }
+            
             if error != nil{
                 self.present(HelperMethods.alertController(title: "Place not found", message: "Try  again"), animated: true, completion: nil)
             }
@@ -83,9 +87,6 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
             self.locationData.latitude = latitude
             self.locationData.longitude = longitude
             completionHandler(nil)
-            performUpdatesOnMain {
-                HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
-            }
         }
     }
     

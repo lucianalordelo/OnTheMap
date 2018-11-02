@@ -32,6 +32,7 @@ class HelperMethods {
     
     static func stopActivityIndicator (_ view: UIView, activityIndicator: UIActivityIndicatorView) {
         activityIndicator.stopAnimating()
+        activityIndicator.removeFromSuperview()
         UIApplication.shared.endIgnoringInteractionEvents()
     }
 }

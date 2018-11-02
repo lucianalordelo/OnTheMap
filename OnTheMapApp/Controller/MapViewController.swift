@@ -105,6 +105,10 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         
         ParseApiClient.sharedInstance().getLocations { (arrayOfLocations, error) in
             
+            performUpdatesOnMain {
+                HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
+            }
+            
             if let error = error {
                 performUpdatesOnMain {
                     self.present(HelperMethods.alertController(title: "Error", message: error), animated: true, completion: nil)
@@ -121,7 +125,6 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
             performUpdatesOnMain {
                 StudentInformations.data = arrayOfLocations
                 self.updateMap()
-                HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
             }
         }
     }

@@ -52,11 +52,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             
             performUpdatesOnMain {
                 self.configureUI(false)
+                HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
             }
             
             guard let sessionID = sessionID, let accountKey = accountKey else{
                 performUpdatesOnMain {
                     self.present(HelperMethods.alertController(title: "Login error", message: "Unable to complete login: \(error!)"), animated: true, completion: nil)
+                    self.configureUI(true)
                 }
                 return
             }
@@ -79,7 +81,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             })
             
             performUpdatesOnMain {
-                HelperMethods.stopActivityIndicator(self.view, activityIndicator: self.activityIndicator)
                 self.completeLogin()
             }
         }
