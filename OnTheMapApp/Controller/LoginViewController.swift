@@ -10,7 +10,6 @@ import UIKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
-    //MARK: Variables
     @IBOutlet weak var email : UITextField!
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var loginButton : UIButton!
@@ -38,7 +37,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         unsubscribeFromKeyboardNotifications()
     }
     
-    //MARK: Login to udacity
+    //MARK: Login & signup to udacity
     @IBAction func UdacityLogin(_ sender: Any) {
         
         if email.text == "" || password.text == ""{
@@ -90,30 +89,26 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         let url = URL(string: "https://www.udacity.com/account/auth#!/signup")
         
         if UIApplication.shared.canOpenURL(url!) {
-            UIApplication.shared.open(url!, options: [:], completionHandler: nil)
+            UIApplication.shared.open(url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
         }
     }
-    
-    //MARK: Helpers
-    
-    //Enable or Hide UIElements
     
     func completeLogin() {
         let controller = self.storyboard?.instantiateViewController(withIdentifier: "navigationController") as! UINavigationController
         present(controller, animated: true, completion: nil)
     }
-    
+    //MARK: Helpers
+    //Enable or Hide UIElements
     func configureUI (_ Enabled: Bool){
         loginButton.isEnabled = Enabled
         password.isEnabled = Enabled
         email.isEnabled = Enabled
     }
-    
-    
+
     //Configure keyboard appearance
     func subscribeToKeyboardNotifications () {
-        NotificationCenter.default.addObserver(self, selector: #selector (keyBoardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector (keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: self)
+        NotificationCenter.default.addObserver(self, selector: #selector (keyBoardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector (keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: self)
     }
     
     func unsubscribeFromKeyboardNotifications () {
@@ -121,7 +116,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func keyBoardWillShow (_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey]) as? NSValue {
+        if let keyboardSize = (notification.userInfo![UIResponder.keyboardFrameBeginUserInfoKey]) as? NSValue {
             if view.frame.origin.y == 0{
                 view.frame.origin.y -= (keyboardSize.cgRectValue.height)/2
             }
@@ -129,7 +124,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func keyboardWillHide (_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey]) as? NSValue {
+        if let keyboardSize = (notification.userInfo![UIResponder.keyboardFrameBeginUserInfoKey]) as? NSValue {
             if view.frame.origin.y != 0{
                 view.frame.origin.y += (keyboardSize.cgRectValue.height)/2
             }
@@ -151,3 +146,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
 }
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
+}

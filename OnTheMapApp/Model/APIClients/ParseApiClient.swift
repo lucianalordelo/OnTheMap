@@ -36,7 +36,6 @@ class ParseApiClient: Client {
                 return
             }
             
-            
             if let results = data["results"] as? [[String:AnyObject]] {
                 var studentsArray = [StudentInformation]()
                 for result in results as [[String:AnyObject]]{
@@ -79,9 +78,7 @@ class ParseApiClient: Client {
                     completionHandler(StudentInformation(dictionary: result),nil)
                 }
             }
-            
         }
-        
     }
     
     func publishLocation (uniqueKey: String, firstName: String, lastName: String, mapString: String, mediaUrl: String, latitude: Double, longitude: Double, _ completionHandler: @escaping(_ error:String?)-> Void) {
@@ -124,9 +121,7 @@ class ParseApiClient: Client {
             }
             completionHandler(nil)
         }
-        
     }
-    
     
     class func sharedInstance () -> ParseApiClient {
         struct Singleton {

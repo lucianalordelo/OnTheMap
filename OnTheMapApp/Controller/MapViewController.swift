@@ -16,7 +16,6 @@ import MapKit
 
 class MapViewController: UIViewController, MKMapViewDelegate  {
     
-    //Outlet:
     @IBOutlet weak var mapView : MKMapView?
     var activityIndicator = UIActivityIndicatorView()
     
@@ -29,7 +28,7 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         navigationItem.title = "On the Map"
     }
     
-    
+    //MARK: Selectors
     @objc func logoutPressed () {
         UdacityApiClient.sharedInstance().logout { (error) in
             performUpdatesOnMain {
@@ -54,8 +53,8 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
             let yesAction = UIAlertAction(title: "Yes", style: .destructive) { (alertAction) in
                 presentNextVC()
             }
-            alertcontroller.addAction(noAction)
             alertcontroller.addAction(yesAction)
+            alertcontroller.addAction(noAction)
             present(alertcontroller,animated: true, completion: nil)
         } else{
             presentNextVC()
@@ -94,7 +93,7 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         }
         let url = URL(string: subtitle!)
         if UIApplication.shared.canOpenURL(url!) {
-            UIApplication.shared.open(url!, options: [:], completionHandler: nil)
+            UIApplication.shared.open(url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
         }
     }
     
@@ -144,4 +143,9 @@ class MapViewController: UIViewController, MKMapViewDelegate  {
         mapView?.addAnnotations(annotations)
     }
     
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

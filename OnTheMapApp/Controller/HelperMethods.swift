@@ -20,9 +20,9 @@ class HelperMethods {
     static func startActivityIndicator (_ view: UIView, activityIndicator: UIActivityIndicatorView) {
         activityIndicator.center = view.center
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
-        let centerX =  NSLayoutConstraint(item: activityIndicator, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0)
-        let centerY =  NSLayoutConstraint(item: activityIndicator, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerY, multiplier: 1, constant: 0)
+        activityIndicator.style = UIActivityIndicatorView.Style.gray
+        let centerX =  NSLayoutConstraint(item: activityIndicator, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1, constant: 0)
+        let centerY =  NSLayoutConstraint(item: activityIndicator, attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerY, multiplier: 1, constant: 0)
         view.addSubview(activityIndicator)
         view.addConstraints([centerX,centerY])
         

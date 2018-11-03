@@ -22,6 +22,7 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         navigationItem.title = "On the Map"
     }
     
+    //MARK: Selectors
     @objc func logoutPressed () {
         UdacityApiClient.sharedInstance().logout { (error) in
             performUpdatesOnMain {
@@ -62,8 +63,8 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return StudentInformations.data.count
     }
-    //MARK: TableView Delegate
     
+    //MARK: TableView Delegate
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let reuseID = "identifier"
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseID)
@@ -81,13 +82,12 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         let student = StudentInformations.data[indexPath.row]
         let url = URL(string: student.mediaUrl)
         if UIApplication.shared.canOpenURL(url!) {
-            UIApplication.shared.open(url!, options: [:], completionHandler: nil)
+            UIApplication.shared.open(url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
         } else {
             self.present(HelperMethods.alertController(title: "No URL provided", message: "Select another student"), animated: true, completion: nil)
             
         }
     }
-    
     
     //MARK : Helpers
     func loadData(){
@@ -112,4 +112,9 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})
 }

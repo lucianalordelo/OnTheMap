@@ -75,8 +75,6 @@ class ConfirmLocationViewController: UIViewController, MKMapViewDelegate, UIText
                 
             }
         } else {
-            //let info = StudentInformation(objectId: "", uniqueKey: "\(appDelegate.accountKey!)", firstName: "\(appDelegate.firstName)", lastName: "\(appDelegate.lastName)", mapString: "\(locationData.locationText)", mediaUrl: "\(urlTextField.text!)", latitude: locationData.latitude, longitude: locationData.longitude)
-            
             //First map posting
             ParseApiClient.sharedInstance().publishLocation(uniqueKey: "\(appDelegate.accountKey!)", firstName: appDelegate.firstName, lastName: appDelegate.lastName, mapString: locationData.locationText, mediaUrl: urlTextField.text!, latitude: locationData.latitude, longitude: locationData.longitude) { (error) in
                 if error != nil {
@@ -93,8 +91,8 @@ class ConfirmLocationViewController: UIViewController, MKMapViewDelegate, UIText
     
     //Configure keyboard appearance
     func subscribeToKeyboardNotifications () {
-        NotificationCenter.default.addObserver(self, selector: #selector (keyBoardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector (keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: self)
+        NotificationCenter.default.addObserver(self, selector: #selector (keyBoardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector (keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: self)
     }
     
     func unsubscribeFromKeyboardNotifications () {

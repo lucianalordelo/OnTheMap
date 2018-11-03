@@ -37,18 +37,4 @@ struct ApiHelper {
         static let users = "users"
         
     }
-    
-    struct ParseResponses    {
-        
-        static let ObjectID = "objectId"
-        static let UniqueKey = "uniqueKey"
-        static let FirstName = "firstName"
-        static let LastName = "lastName"
-        static let MapString = "mapString"
-        static let Latitude = "latitude"
-        static let Longitude = "longitude"
-        static let CreatedAt = "createdAt"
-        static let UpdatedAt = "updatedAt"
-        static let MediaURL =  "mediaURL"
-    }
 }

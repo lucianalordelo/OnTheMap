@@ -35,7 +35,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func findLocation(_ sender: Any) {
         if locationTextField.text == "" {
-            self.present(HelperMethods.alertController(title: "Error", message: "type a location"), animated: true, completion: nil)
+            self.present(HelperMethods.alertController(title: "Error", message: "Type a location"), animated: true, completion: nil)
         } else {
             locationData.locationText = locationTextField.text!
             //Get the latitude and longitude
@@ -99,8 +99,8 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     
     //Configure keyboard appearance
     func subscribeToKeyboardNotifications () {
-        NotificationCenter.default.addObserver(self, selector: #selector (keyBoardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector (keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: self)
+        NotificationCenter.default.addObserver(self, selector: #selector (keyBoardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector (keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: self)
     }
     
     func unsubscribeFromKeyboardNotifications () {
@@ -108,7 +108,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func keyBoardWillShow (_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey]) as? NSValue {
+        if let keyboardSize = (notification.userInfo![UIResponder.keyboardFrameBeginUserInfoKey]) as? NSValue {
             if view.frame.origin.y == 0{
                 view.frame.origin.y -= (keyboardSize.cgRectValue.height)/2
             }
@@ -116,7 +116,7 @@ class AddLocationViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func keyboardWillHide (_ notification: Notification) {
-        if let keyboardSize = (notification.userInfo![UIKeyboardFrameBeginUserInfoKey]) as? NSValue {
+        if let keyboardSize = (notification.userInfo![UIResponder.keyboardFrameBeginUserInfoKey]) as? NSValue {
             if view.frame.origin.y != 0{
                 view.frame.origin.y += (keyboardSize.cgRectValue.height)/2
             }
