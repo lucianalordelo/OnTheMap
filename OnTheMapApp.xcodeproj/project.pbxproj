@@ -80,8 +80,7 @@
 		E2CD979B2166ADC00012F36B /* OnTheMapApp */ = {
 			isa = PBXGroup;
 			children = (
-				E2CD97A82166ADC40012F36B /* Info.plist */,
-				E2CD97B32166AF430012F36B /* Supporting Files */,
+				E2CD97B32166AF430012F36B /* Supporting_Files */,
 				E2CD97B42166AF5B0012F36B /* Assets */,
 				E2CD979C2166ADC00012F36B /* AppDelegate.swift */,
 				E2CD97AF2166ADFC0012F36B /* GDCBlackBox.swift */,
@@ -123,11 +122,12 @@
 			path = Controller;
 			sourceTree = "<group>";
 		};
-		E2CD97B32166AF430012F36B /* Supporting Files */ = {
+		E2CD97B32166AF430012F36B /* Supporting_Files */ = {
 			isa = PBXGroup;
 			children = (
+				E2CD97A82166ADC40012F36B /* Info.plist */,
 			);
-			path = "Supporting Files";
+			path = Supporting_Files;
 			sourceTree = "<group>";
 		};
 		E2CD97B42166AF5B0012F36B /* Assets */ = {
@@ -373,7 +373,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OnTheMapApp/Info.plist;
+				INFOPLIST_FILE = OnTheMapApp/Supporting_Files/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -390,7 +390,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = OnTheMapApp/Info.plist;
+				INFOPLIST_FILE = OnTheMapApp/Supporting_Files/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
